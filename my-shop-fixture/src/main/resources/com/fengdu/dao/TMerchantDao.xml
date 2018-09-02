@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TMerchantDao">
+
+    <resultMap type="com.fengdu.entity.TMerchantEntity" id="tMerchantMap">
+        <result property="id" column="id"/>
+        <result property="merchantName" column="merchant_name"/>
+        <result property="mcLoginName" column="mc_login_name"/>
+        <result property="appId" column="app_id"/>
+        <result property="passWord" column="pass_word"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="creator" column="creator"/>
+        <result property="modifier" column="modifier"/>
+         <result property="status" column="status"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TMerchantEntity">
+		select
+			`id`,
+			app_id,
+			`mc_login_name`,
+			`merchant_name`,
+			`pass_word`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`status`,
+			`modifier`
+		from t_merchant
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TMerchantEntity">
+		select
+    		`id`,
+    		app_id,
+    		`status`,
+    		`mc_login_name`,
+    		`merchant_name`,
+    		`pass_word`,
+    		`create_time`,
+    		`modify_time`,
+    		`creator`,
+    		`modifier`
+		from t_merchant
+		WHERE 1=1
+		<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_merchant
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TMerchantEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_merchant(
+			id,
+			`status`,
+			app_id,
+			`mc_login_name`,
+			`merchant_name`,
+			`pass_word`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`modifier`)
+		values(
+			#{id},
+			#{status},
+			#{appId},
+			#{mcLoginName},
+			#{merchantName},
+			#{passWord},
+			#{createTime},
+			#{modifyTime},
+			#{creator},
+			#{modifier})
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TMerchantEntity">
+		update t_merchant 
+		<set>
+			<if test="appId != null">`app_id` = #{appId}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="mcLoginName != null">`mc_login_name` = #{mcLoginName}, </if>
+			<if test="merchantName != null">`merchant_name` = #{merchantName}, </if>
+			<if test="passWord != null">`pass_word` = #{passWord}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="modifyTime != null">`modify_time` = #{modifyTime}, </if>
+			<if test="creator != null">`creator` = #{creator}, </if>
+			<if test="modifier != null">`modifier` = #{modifier}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_merchant where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_merchant where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+	<select id="queryMaxId" resultType="java.lang.Integer" parameterType="map">
+        SELECT MAX(id) FROM t_merchant
+    </select>
+</mapper>

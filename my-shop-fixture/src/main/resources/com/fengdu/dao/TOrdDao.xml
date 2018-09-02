@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TOrdDao">
+
+    <resultMap type="com.fengdu.entity.TOrdEntity" id="tOrdMap">
+        <result property="id" column="id"/>
+        <result property="clientName" column="client_name"/>
+        <result property="orderType" column="order_type"/>
+        <result property="totalFee" column="total_fee"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="payId" column="pay_id"/>
+        <result property="clientId" column="client_id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="consignee" column="consignee"/>
+        <result property="shippingStatus" column="shipping_status"/>
+        <result property="campaignId" column="campaign_id"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="district" column="district"/>
+        <result property="address" column="address"/>
+        <result property="mobile" column="mobile"/>
+        <result property="postscript" column="postscript"/>
+        <result property="shippingId" column="shipping_id"/>
+        <result property="shippingName" column="shipping_name"/>
+        <result property="payName" column="pay_name"/>
+        <result property="shippingFee" column="shipping_fee"/>
+        <result property="integral" column="integral"/>
+        <result property="integralMoney" column="integral_money"/>
+        <result property="orderPrice" column="order_price"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="addTime" column="add_time"/>
+        <result property="confirmTime" column="confirm_time"/>
+        <result property="payTime" column="pay_time"/>
+        <result property="freightPrice" column="freight_price"/>
+        <result property="couponId" column="coupon_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="couponPrice" column="coupon_price"/>
+        <result property="callbackStatus" column="callback_status"/>
+        <result property="shippingNo" column="shipping_no"/>
+        <result property="fullCutPrice" column="full_cut_price"/>
+        <result property="imgUrl" column="img_url"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TOrdEntity">
+		select
+			o.`id`,
+			t.`img_url`,
+			t.`mobile`,
+			t.client_name,
+			o.`order_type`,
+			o.`total_fee`,
+			o.`order_no`,
+			o.`pay_status`,
+			o.`pay_id`,
+			o.`client_id`,
+			o.`merchant_id`,
+			o.`order_status`,
+			o.`consignee`,
+			o.`shipping_status`,
+			o.`campaign_id`,
+			o.`country`,
+			o.`province`,
+			o.`city`,
+			o.`district`,
+			o.`address`,
+			o.`mobile`,
+			o.`postscript`,
+			o.`shipping_id`,
+			o.`shipping_name`,
+			o.`pay_name`,
+			o.`shipping_fee`,
+			o.`integral`,
+			o.`integral_money`,
+			o.`order_price`,
+			o.`goods_price`,
+			o.`add_time`,
+			o.`confirm_time`,
+			o.`pay_time`,
+			o.`freight_price`,
+			o.`coupon_id`,
+			o.`parent_id`,
+			o.`coupon_price`,
+			o.`callback_status`,
+			o.`shipping_no`,
+			o.`full_cut_price`
+		from t_ord o,t_client t
+		where o.id = #{id} and o.client_id = t.id
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TOrdEntity">
+		select
+			o.`id`,
+			t.`img_url`,
+			t.`mobile`,
+			t.client_name,
+			o.`order_type`,
+			o.`total_fee`,
+			o.`order_no`,
+			o.`pay_status`,
+			o.`pay_id`,
+			o.`client_id`,
+			o.`merchant_id`,
+			o.`order_status`,
+			o.`consignee`,
+			o.`shipping_status`,
+			o.`campaign_id`,
+			o.`country`,
+			o.`province`,
+			o.`city`,
+			o.`district`,
+			o.`address`,
+			o.`mobile`,
+			o.`postscript`,
+			o.`shipping_id`,
+			o.`shipping_name`,
+			o.`pay_name`,
+			o.`shipping_fee`,
+			o.`integral`,
+			o.`integral_money`,
+			o.`order_price`,
+			o.`goods_price`,
+			o.`add_time`,
+			o.`confirm_time`,
+			o.`pay_time`,
+			o.`freight_price`,
+			o.`coupon_id`,
+			o.`parent_id`,
+			o.`coupon_price`,
+			o.`callback_status`,
+			o.`shipping_no`,
+			o.`full_cut_price`
+		from t_ord o,t_client t
+		WHERE 1=1 and o.client_id = t.id
+		<if test="name != null and name.trim() != ''">
+			AND t.`client_name` LIKE concat('%',#{name},'%')
+		</if>
+		<if test="merchantId != null">
+			AND o.merchant_id =  #{merchantId}
+		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND t.`mobile` LIKE concat('%',#{mobile},'%')
+		</if>
+		<if test="addTime != null">
+            <![CDATA[ and date(o.`add_time`) = date(#{addTime,jdbcType=TIMESTAMP})]]>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by o.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_ord o,t_client t
+		WHERE 1=1 and o.client_id = t.id
+       <if test="name != null and name.trim() != ''">
+			AND t.`client_name` LIKE concat('%',#{name},'%')
+		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND t.`mobile` LIKE concat('%',#{mobile},'%')
+		</if>
+		<if test="merchantId != null">
+			AND o.merchant_id =  #{merchantId}
+		</if>
+		<if test="addTime != null">
+            <![CDATA[ and date(o.`add_time`) = date(#{addTime,jdbcType=TIMESTAMP})]]>
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TOrdEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_ord(
+			`order_type`,
+			`total_fee`,
+			`order_no`,
+			`pay_status`,
+			`pay_id`,
+			`client_id`,
+			`merchant_id`,
+			`order_status`,
+			`consignee`,
+			`shipping_status`,
+			`campaign_id`,
+			`country`,
+			`province`,
+			`city`,
+			`district`,
+			`address`,
+			`mobile`,
+			`postscript`,
+			`shipping_id`,
+			`shipping_name`,
+			`pay_name`,
+			`shipping_fee`,
+			`integral`,
+			`integral_money`,
+			`order_price`,
+			`goods_price`,
+			`add_time`,
+			`confirm_time`,
+			`pay_time`,
+			`freight_price`,
+			`coupon_id`,
+			`parent_id`,
+			`coupon_price`,
+			`callback_status`,
+			`shipping_no`,
+			`full_cut_price`)
+		values(
+			#{orderType},
+			#{totalFee},
+			#{orderNo},
+			#{payStatus},
+			#{payId},
+			#{clientId},
+			#{merchantId},
+			#{orderStatus},
+			#{consignee},
+			#{shippingStatus},
+			#{campaignId},
+			#{country},
+			#{province},
+			#{city},
+			#{district},
+			#{address},
+			#{mobile},
+			#{postscript},
+			#{shippingId},
+			#{shippingName},
+			#{payName},
+			#{shippingFee},
+			#{integral},
+			#{integralMoney},
+			#{orderPrice},
+			#{goodsPrice},
+			#{addTime},
+			#{confirmTime},
+			#{payTime},
+			#{freightPrice},
+			#{couponId},
+			#{parentId},
+			#{couponPrice},
+			#{callbackStatus},
+			#{shippingNo},
+			#{fullCutPrice})
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TOrdEntity">
+		update t_ord 
+		<set>
+			<if test="orderType != null">`order_type` = #{orderType}, </if>
+			<if test="totalFee != null">`total_fee` = #{totalFee}, </if>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="payStatus != null">`pay_status` = #{payStatus}, </if>
+			<if test="payId != null">`pay_id` = #{payId}, </if>
+			<if test="clientId != null">`client_id` = #{clientId}, </if>
+			<if test="merchantId != null">`merchant_id` = #{merchantId}, </if>
+			<if test="orderStatus != null">`order_status` = #{orderStatus}, </if>
+			<if test="consignee != null">`consignee` = #{consignee}, </if>
+			<if test="shippingStatus != null">`shipping_status` = #{shippingStatus}, </if>
+			<if test="campaignId != null">`campaign_id` = #{campaignId}, </if>
+			<if test="country != null">`country` = #{country}, </if>
+			<if test="province != null">`province` = #{province}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="district != null">`district` = #{district}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="mobile != null">`mobile` = #{mobile}, </if>
+			<if test="postscript != null">`postscript` = #{postscript}, </if>
+			<if test="shippingId != null">`shipping_id` = #{shippingId}, </if>
+			<if test="shippingName != null">`shipping_name` = #{shippingName}, </if>
+			<if test="payName != null">`pay_name` = #{payName}, </if>
+			<if test="shippingFee != null">`shipping_fee` = #{shippingFee}, </if>
+			<if test="integral != null">`integral` = #{integral}, </if>
+			<if test="integralMoney != null">`integral_money` = #{integralMoney}, </if>
+			<if test="orderPrice != null">`order_price` = #{orderPrice}, </if>
+			<if test="goodsPrice != null">`goods_price` = #{goodsPrice}, </if>
+			<if test="addTime != null">`add_time` = #{addTime}, </if>
+			<if test="confirmTime != null">`confirm_time` = #{confirmTime}, </if>
+			<if test="payTime != null">`pay_time` = #{payTime}, </if>
+			<if test="freightPrice != null">`freight_price` = #{freightPrice}, </if>
+			<if test="couponId != null">`coupon_id` = #{couponId}, </if>
+			<if test="parentId != null">`parent_id` = #{parentId}, </if>
+			<if test="couponPrice != null">`coupon_price` = #{couponPrice}, </if>
+			<if test="callbackStatus != null">`callback_status` = #{callbackStatus}, </if>
+			<if test="shippingNo != null">`shipping_no` = #{shippingNo}, </if>
+			<if test="fullCutPrice != null">`full_cut_price` = #{fullCutPrice}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_ord where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_ord where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

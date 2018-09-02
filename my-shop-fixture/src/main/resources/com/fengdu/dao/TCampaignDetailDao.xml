@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TCampaignDetailDao">
+
+    <resultMap type="com.fengdu.entity.TCampaignDetailEntity" id="tCampaignDetailMap">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="clientId" column="client_id"/>
+        <result property="clientName" column="client_name"/>
+        <result property="typeId" column="type_id"/>
+        <result property="typeName" column="type_name"/>
+        <result property="remark" column="remark"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="creator" column="creator"/>
+        <result property="modifier" column="modifier"/>
+         <result property="wechatNo" column="wechat_no"/>
+          <result property="imgUrl" column="img_url"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TCampaignDetailEntity">
+		select
+			t.`id`,
+			t.`client_id`,
+			t.`type_id`,
+			d.name as type_name,
+			c.client_name as client_name,
+			t.`remark`,
+			t.`create_time`,
+			t.`modify_time`,
+			t.`creator`,
+			t.`modifier`
+		from t_campaign_detail t,t_campaign_type d,t_client c
+		where t.id = #{id} and t.type_id = d.id and c.id = t.`client_id`
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TCampaignDetailEntity">
+		select
+    		c.`id`,
+    		c.`client_id`,
+    		c.`type_id`,
+    		e.`wechat_no`,
+    		e.`img_url`,
+    		t.name as type_name,
+    		e.client_name as client_name,
+    		c.`remark`,
+    		c.`create_time`,
+    		c.`modify_time`,
+    		c.`creator`,
+    		c.`modifier`
+		from t_campaign_detail c,t_campaign_type t,t_client e
+		WHERE c.type_id = t.id and e.id = c.`client_id`
+	<!-- 	<if test="name != null and name.trim() != ''">
+			AND name LIKE concat('%',#{name},'%')
+		</if> -->
+		<if test="merchantId != null">
+			AND t.merchant_id = #{merchantId}
+		</if>
+		<if test="typeId != null">
+			AND c.type_id = #{typeId}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by c.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_campaign_detail c,t_campaign_type t
+		WHERE c.type_id = t.id
+       <!--  <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if> -->
+        <if test="merchantId != null">
+			AND t.merchant_id = #{merchantId}
+		</if>
+		<if test="typeId != null">
+			AND c.type_id = #{typeId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TCampaignDetailEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_campaign_detail(
+			`client_id`,
+			`type_id`,
+			`remark`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`modifier`)
+		values(
+			#{clientId},
+			#{typeId},
+			#{remark},
+			#{createTime},
+			#{modifyTime},
+			#{creator},
+			#{modifier})
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TCampaignDetailEntity">
+		update t_campaign_detail 
+		<set>
+			<if test="clientId != null">`client_id` = #{clientId}, </if>
+			<if test="typeId != null">`type_id` = #{typeId}, </if>
+			<if test="remark != null">`remark` = #{remark}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="modifyTime != null">`modify_time` = #{modifyTime}, </if>
+			<if test="creator != null">`creator` = #{creator}, </if>
+			<if test="modifier != null">`modifier` = #{modifier}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_campaign_detail where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_campaign_detail where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

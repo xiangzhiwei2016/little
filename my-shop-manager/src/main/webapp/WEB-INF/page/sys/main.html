@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>欢迎页</title>
+    #parse("sys/header.html")
+</head>
+<body>
+<div id="mainDetail" class="wrapper wrapper-content  animated fadeInRight">
+    <div class="ibox ">
+        <div class="ibox-title">
+            <h2 style="font-weight:bold;">
+            <font color="#57C5F7"><strong>{{user.fullName}}，今天是您的小程序上线第{{user.days}}天</strong></font>
+            </h2>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <div>
+				<h3>小程序关注情况</h3>
+			 <table border="0" style="width:30%;height:30%; text-align:center;line-height: 60px;border: 1px solid transparent;">
+					<tr>
+						<th style="text-align: center;">昨日新增人数</th>
+						<th style="text-align: center;">总关注人数</th>
+					</tr>
+					<tr>
+						<td>{{count.yesterdayForce}}</td>
+						<td>{{count.totalForce}}</td>
+					</tr>
+				</table> 
+			</div>
+			<br/>
+        <br/>
+        <br/>
+			   <div>
+				<h3>小程序订单情况</h3>
+			 <table border="0" style="width:60%;height:30%; text-align:center; line-height: 60px;border: 1px solid transparent;">
+					<tr>
+					<th style="text-align: center;">昨日浏览人数</th>
+						<th style="text-align: center;">昨日缴纳定金人数</th>
+						<th style="text-align: center;">总浏览人数</th>
+						<th style="text-align: center;">总缴纳定金人数</th>
+					</tr>
+					<tr>
+						<td>{{count.yesterdayBrowse}}</td>
+						<td>{{count.yesterdayDeposit}}</td>
+						<td>{{count.totalBrowse}}</td>
+						<td>{{count.totalDeposit}}</td>
+					</tr>
+				</table> 
+			</div>
+    </div>
+</div>
+<script type="text/javascript">
+var vm = new Vue({
+    el: '#mainDetail',
+    data(){
+    	return {
+    		user:{
+    			days:0
+    		},
+    		count:{}
+    	}
+    },
+    methods: {
+        getUser: function () {
+        	this.user = JSON.parse(localStorage.getItem("CURRENT_USER")); 
+        	var create_day = this.user.createTime;
+        	var days  = getDays(create_day);
+        	console.log(days);
+        	this.user.days = days;
+        },
+        getCount: function () {
+        	$.get("../maincount/count/", function (r) {
+                vm.count = r.countResult;
+                console.log(vm.count);
+            });
+        }
+    },
+    created: function () {
+        this.getUser();
+        this.getCount();
+    }
+});
+
+function getDays(d1){
+	    //如果时间格式是正确的，那下面这一步转化时间格式就可以不用了
+	    var dateBegin = new Date(d1.replace(/-/g, "/"));//将-转化为/，使用new Date
+	    var dateEnd = new Date();//获取当前时间
+	    var dateDiff = dateEnd.getTime() - dateBegin.getTime();//时间差的毫秒数
+	    var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000));//计算出相差天数
+	    return dayDiff;
+}
+</script>
+</body>
+</html>

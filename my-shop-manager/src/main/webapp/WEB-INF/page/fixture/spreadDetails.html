@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title> #parse("sys/header.html")
+</head>
+<body>
+	<div id="rrapp" v-cloak>
+		<div v-show="showList">
+			<div>
+				<h3>推广员</h3>
+			 <table border="0" style="width:50%;height:30%; text-align: center;line-height: 60px;border: 1px solid transparent;">
+					<tr>
+						<th style="text-align: center;">用户</th>
+						<th style="text-align: center;">推广总人数</th>
+						<th style="text-align: center;">推广会员人数</th>
+					</tr>
+					<tr>
+						<td >{{tclient.clientName}}</td>
+						<td>{{tclient.totalCount}}</td>
+						<td>{{tclient.memberCount}}</td>
+					</tr>
+				</table> 
+			</div>
+			<br/>
+			<div>
+				<h3>推广详情</h3>
+				<br/>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="${rc.contextPath}/js/fixture/spreadDetails.js?_${date.systemTime}"></script>
+</body>
+</html>

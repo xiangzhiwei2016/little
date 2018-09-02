@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TProductTestDao">
+
+    <resultMap type="com.fengdu.entity.TProductTestEntity" id="tProductTestMap">
+        <result property="id" column="id"/>
+        <result property="productName" column="product_name"/>
+        <result property="vipPrice" column="vip_price"/>
+        <result property="price" column="price"/>
+        <result property="tag" column="tag"/>
+        <result property="productDesc" column="product_desc"/>
+        <result property="productStatus" column="product_STATUS"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="creator" column="creator"/>
+        <result property="modifier" column="MODIFIER"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TProductTestEntity">
+		select
+			`id`,
+			`product_name`,
+			`vip_price`,
+			`price`,
+			`tag`,
+			`product_desc`,
+			`product_STATUS`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`MODIFIER`
+		from t_product_test
+		where id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TProductTestEntity">
+		select
+    		`id`,
+    		`product_name`,
+    		`vip_price`,
+    		`price`,
+    		`tag`,
+    		`product_desc`,
+    		`product_STATUS`,
+    		`create_time`,
+    		`modify_time`,
+    		`creator`,
+    		`MODIFIER`
+		from t_product_test
+		WHERE 1=1
+		<if test="productName != null and productName.trim() != ''">
+			AND product_name LIKE concat('%',#{productName},'%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_product_test
+		WHERE 1=1
+        <if test="productName != null and productName.trim() != ''">
+			AND product_name LIKE concat('%',#{productName},'%')
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TProductTestEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_product_test(
+			`product_name`,
+			`vip_price`,
+			`price`,
+			`tag`,
+			`product_desc`,
+			`product_STATUS`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`MODIFIER`)
+		values(
+			#{productName},
+			#{vipPrice},
+			#{price},
+			#{tag},
+			#{productDesc},
+			#{productStatus},
+			#{createTime},
+			#{modifyTime},
+			#{creator},
+			#{modifier})
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TProductTestEntity">
+		update t_product_test 
+		<set>
+			<if test="productName != null">`product_name` = #{productName}, </if>
+			<if test="vipPrice != null">`vip_price` = #{vipPrice}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="tag != null">`tag` = #{tag}, </if>
+			<if test="productDesc != null">`product_desc` = #{productDesc}, </if>
+			<if test="productStatus != null">`product_STATUS` = #{productStatus}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="modifyTime != null">`modify_time` = #{modifyTime}, </if>
+			<if test="creator != null">`creator` = #{creator}, </if>
+			<if test="modifier != null">`MODIFIER` = #{modifier}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_product_test where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_product_test where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

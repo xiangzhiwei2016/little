@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title> #parse("sys/header.html")
+<style>
+        .upload-list{
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #fff;
+            position: relative;
+            box-shadow: 0 1px 1px rgba(0,0,0,.2);
+            margin-right: 4px;
+        }
+        .upload-list img{
+            width: 100%;
+            height: 100%;
+        }
+        .upload-list-cover{
+            display: none;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,.6);
+        }
+        .upload-list:hover .upload-list-cover{
+            display: block;
+        }
+        .upload-list-cover i{
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            margin: 0 2px;
+        }
+    </style>
+</head>
+<body>
+	<div id="rrapp" v-cloak>
+		<div v-show="showList">
+			<Row :gutter="16"> 
+			<div>
+			  &nbsp;&nbsp;<span>  商品名称</span>&nbsp;&nbsp; <input  class="ivu-input" v-model="q.productName" @on-enter="query" />
+				
+				
+			<!-- <i-col span="4">
+			<lable>商品名称</lable><i-input
+				v-model="q.productName" @on-enter="query" placeholder="商品名称" /> 
+				
+				</i-col> -->
+				
+				 <i-button
+				@click="query">查询</i-button>
+			#if($shiro.hasPermission("tproducttest:save")) <i-button type="info"
+				@click="add">
+			<i class="fa fa-plus"></i>&nbsp;新增</i-button> #end
+			#if($shiro.hasPermission("tproducttest:update")) <i-button
+				type="warning" @click="update">
+			<i class="fa fa-pencil-square-o"></i>&nbsp;修改</i-button> #end
+			#if($shiro.hasPermission("tproducttest:delete")) <i-button
+				type="error" @click="del">
+			<i class="fa fa-trash-o"></i>&nbsp;删除</i-button> #end </div></Row>
+			<table id="jqGrid"></table>
+			<div id="jqGridPager"></div>
+		</div>
+
+		<Card v-show="!showList">
+		<p slot="title">{{title}}</p>
+		<Tabs value="name1"> <Tab-Pane label="通用信息" name="name1">
+		<i-form ref="formValidate" :model="tProductTest" :rules="ruleValidate"
+			:label-width="80"> <Form-item label="商品名称"
+			prop="productName"> <i-input class="ivu-input-smaller"
+			v-model="tProductTest.productName" placeholder="商品名称" /> </Form-item> <Form-item
+			label="会员价" prop="vipPrice"> <i-input
+			v-model="tProductTest.vipPrice" placeholder="会员价（精度4位）" /> </Form-item> <Form-item
+			label="原价（精度4位）" prop="price"> <i-input
+			v-model="tProductTest.price" placeholder="原价（精度4位）" /> </Form-item> <Form-item
+			label="标签" prop="tag"> <i-input
+			v-model="tProductTest.tag" placeholder="标签" /> </Form-item> <Form-item label="描述"
+			prop="productDesc"> <i-input
+			v-model="tProductTest.productDesc" placeholder="描述" /> </Form-item> <Form-item
+			label="商品状态" prop="productStatus"> <i-input
+			v-model="tProductTest.productStatus" placeholder="商品状态" /> </Form-item> <Form-item
+			label="创建时间" prop="createTime"> <i-input
+			v-model="tProductTest.createTime" placeholder="创建时间" /> </Form-item> <Form-item
+			label="修改时间" prop="modifyTime"> <i-input
+			v-model="tProductTest.modifyTime" placeholder="修改时间" /> </Form-item> <Form-item
+			label="创建者" prop="creator"> <i-input
+			v-model="tProductTest.creator" placeholder="创建者" /> </Form-item> <Form-item
+			label="修改者" prop="modifier"> <i-input
+			v-model="tProductTest.modifier" placeholder="修改者" /> </Form-item> <Row> <i-col
+			span="16"> <Form-item label="商品图片" prop="primaryPicUrl">
+		<i-input v-model="tProductTest.primaryPicUrl" placeholder="商品图片"
+			readonly /> </Form-item> </i-col> <i-col span="3"> <Form-item :label-width="1">
+		<Upload style="width: 300px;" action="../sys/oss/upload"
+			:format="['jpg','jpeg','png']" max-size="2048"
+			:on-success="handleSuccessPicUrl"
+			:on-format-error="handleFormatError" :show-upload-list="false"
+			:on-exceeded-size="handleMaxSize"> <i-button
+			icon="ios-cloud-upload-outline">上传图片</i-button> </Upload> </Form-item> </i-col> <i-col span="3">
+		<Form-item :label-width="1"> <i-button icon="eye"
+			@click="eyeImagePicUrl">预览图片</i-button> </Form-item> </i-col> </Row> <Row> <i-col
+			span="16"> <Form-item label="商品列表图" prop="listPicUrl">
+		<i-input v-model="tProductTest.listPicUrl" placeholder="商品列表图"
+			readonly /> </Form-item> </i-col> <i-col span="3"> <Form-item :label-width="1">
+		<Upload style="width: 300px;" action="../sys/oss/upload"
+			:format="['jpg','jpeg','png']" max-size="2048"
+			:on-success="handleSuccessListPicUrl"
+			:on-format-error="handleFormatError" :show-upload-list="false"
+			:on-exceeded-size="handleMaxSize"> <i-button
+			icon="ios-cloud-upload-outline">上传图片</i-button> </Upload> </Form-item> </i-col> <i-col span="3">
+		<Form-item :label-width="1"> <i-button icon="eye"
+			@click="eyeImageListPicUrl">预览图片</i-button> </Form-item> </i-col> </Row>
+			</i-form>
+			</Tab-Pane> <Tab-Pane label="详细描述"
+			name="name2"> <template>
+		<div class="upload-list" v-for="item in uploadList">
+			<template v-if="item.status === 'finished'"> <img
+				:src="item.imgUrl" />
+			<div class="upload-list-cover">
+				<Icon type="ios-eye-outline" @click.native="handleView(item.imgUrl)"></Icon>
+				<Icon type="ios-trash-outline" @click.native="handleRemove(item)"></Icon>
+			</div>
+			</template>
+			<template v-else> <Progress v-if="item.showProgress"
+				:percent="item.percentage" hide-info></Progress> </template>
+		</div>
+		<Upload ref="upload" :show-upload-list="false"
+			:default-file-list="uploadList" :on-success="handleSuccess"
+			:format="['jpg','jpeg','png']" :max-size="2048"
+			:on-format-error="handleFormatError"
+			:on-exceeded-size="handleMaxSize" :before-upload="handleBeforeUpload"
+			multiple type="drag" action="../sys/oss/upload"
+			style="display: inline-block;width:58px;">
+		<div style="width: 58px; height: 58px; line-height: 58px;">
+			<Icon type="camera" size="20"></Icon>
+		</div>
+		</Upload> <Modal title="查看图片" v-model="visible"> <img :src="imgName"
+			v-if="visible" style="width: 100%" /> </Modal> </template> <!-- <div id="goodsDesc"></div> -->
+		</Tab-Pane> </Tabs>
+		<div style="padding-left: 20px">
+			<i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+			<i-button type="warning" @click="reload" style="margin-left: 8px" />
+			返回
+			</i-button>
+			<i-button type="ghost" @click="handleReset('formValidate')"
+				style="margin-left: 8px">重置</i-button>
+		</div>
+		<!-- 
+            <Form-item>
+                <i-button type="primary" @click="handleSubmit('formValidate')">提交</i-button>
+                <i-button type="warning" @click="reload" style="margin-left: 8px"/>返回</i-button>
+                <i-button type="ghost" @click="handleReset('formValidate')" style="margin-left: 8px">重置</i-button>
+            </Form-item>
+        </i-form> --> </Card>
+	</div>
+
+	<script
+		src="${rc.contextPath}/js/good/tproducttest.js?_${date.systemTime}"></script>
+</body>
+</html>

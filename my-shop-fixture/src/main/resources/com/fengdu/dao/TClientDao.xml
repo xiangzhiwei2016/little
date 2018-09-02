@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TClientDao">
+
+    <resultMap type="com.fengdu.entity.TClientEntity" id="tClientMap">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="clientName" column="client_name"/>
+        <result property="wechatNo" column="wechat_no"/>
+        <result property="mobile" column="mobile"/>
+        <result property="imgUrl" column="img_url"/>
+         <result property="clientType" column="client_type"/>
+        <result property="channel" column="channel"/>
+        <result property="registerTime" column="register_time"/>
+        <result property="upClientId" column="up_client_id"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TClientEntity">
+		select
+			`id`,
+			`mobile`,
+			`client_name`,
+			`wechat_no`,
+			`img_url`,
+			`client_type`,
+			`channel`,
+			`register_time`
+		from t_client 
+		where id = #{id} 
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TClientEntity">
+		select
+    		c.`id`,
+    		c.`mobile`,
+    		c.`client_name`,
+    		c.`wechat_no`,
+    		c.`img_url`,
+    		c.`client_type`,
+			c.`channel`,
+			c.`register_time`
+		from t_client c,t_merchant m
+		WHERE c.merchant_id = m.id
+		<if test="id != null">
+			AND c.id = #{id}
+		</if>
+		<if test="name != null and name.trim() != ''">
+			AND c.client_name LIKE concat('%',#{name},'%')
+		</if>
+		<if test="clientType != null and clientType.trim() != ''">
+			AND c.client_type  = #{clientType}
+		</if>
+		<if test="merchantId != null">
+			AND c.merchant_id = #{merchantId}
+		</if>
+		<if test="upClientId != null">
+			AND c.up_client_id = #{upClientId}
+		</if>
+		<if test="registerTime != null">
+            <![CDATA[ and date(c.register_time) = date(#{registerTime,jdbcType=TIMESTAMP})]]>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by c.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*)
+		from t_client c,t_merchant m
+		WHERE c.merchant_id = m.id
+        <if test="name != null and name.trim() != ''">
+            AND c.client_name LIKE concat('%',#{name},'%')
+        </if>
+        <if test="clientType != null and clientType.trim() != ''">
+			AND c.client_type  = #{clientType}
+		</if>
+        <if test="merchantId != null">
+			AND c.merchant_id = #{merchantId}
+		</if>
+		<if test="upClientId != null">
+			AND c.up_client_id = #{upClientId}
+		</if>
+		<if test="registerTime != null">
+            <![CDATA[ and date(c.register_time) = date(#{registerTime,jdbcType=TIMESTAMP})]]>
+        </if>
+        <if test="lastLoginTime != null">
+            <![CDATA[ and date(c.last_login_time) = date(#{lastLoginTime,jdbcType=TIMESTAMP})]]>
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TClientEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_client(
+			`client_name`,
+			`wechat_no`,
+			`img_url`,
+			`client_type`,
+			`channel`,
+			`register_time`
+			 )
+		values(
+			#{clientName},
+			#{wechatNo},
+			#{imgUrl},
+			#{clientType},
+			#{channel},
+			#{registerTime}
+			)
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TClientEntity">
+		update t_client t
+		<set>
+			<if test="clientName != null">t.`client_name` = #{clientName}, </if>
+			<if test="wechatNo != null">t.`wechat_no` = #{wechatNo}, </if>
+			<if test="mobile != null">t.`mobile` = #{mobile}, </if>
+			<if test="imgUrl != null">t.`img_url` = #{imgUrl},</if>
+			<if test="clientType != null">t.`client_type` = #{clientType}, </if>
+			<if test="channel != null">t.`channel` = #{channel}, </if>
+			<if test="registerTime != null">t.`register_time` = #{registerTime}</if>
+		</set>
+		where t.id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_client where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_client where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

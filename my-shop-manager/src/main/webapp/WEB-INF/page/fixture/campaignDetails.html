@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title> #parse("sys/header.html")
+</head>
+<body>
+	<div id="rrapp" v-cloak>
+		<div v-show="showList">
+			<div>
+				<h3>活动详情</h3>
+				<div v-show="ishowZtfxj">
+				<i-form :model="tCampaignType" :label-width="80">
+		            <Form-item label="组团（人）" prop="group">
+		                <i-input v-model="tCampaignType.group" disabled="true" style="width:40%;" placeholder="组团人数（人）"/>
+		            </Form-item>
+		            <Form-item label="满额（元）" prop="moneyFull">
+		                <i-input v-model="tCampaignType.moneyFull" disabled="true" style="width:40%" placeholder="满额（元）"/>
+		            </Form-item>
+		            <Form-item label="返现（元）" prop="moneyBack">
+		                <i-input v-model="tCampaignType.moneyBack" disabled="true" style="width:40%" placeholder="返现（元）"/>
+		            </Form-item>
+		        </i-form>
+		        </div>
+				<div v-show="ishowDpslp">
+					<i-form ref="formValidate" :model="tCampaignType" :rules="ruleValidate" :label-width="80">
+			            <Form-item label="赠送礼品" prop="gift">
+			                <textarea v-model="tCampaignType.gift" disabled="true" style="width:40%" placeholder="赠送礼品"></textarea>
+			            </Form-item>
+			        </i-form>
+			</div>
+			<div v-show="ishowDjxzk">
+				<i-form :model="tCampaignType"  :label-width="80">
+		            <Form-item label="应交定金" prop="deposit">
+		                <i-input v-model="tCampaignType.deposit" disabled="true" style="width:40%" placeholder="应交定金"/>
+		            </Form-item>
+		            <Form-item label="折扣价" prop="discount">
+		                <i-input v-model="tCampaignType.discount" disabled="true" style="width:40%" placeholder="折扣价"/>
+		            </Form-item>
+		        </i-form>
+			</div>
+			</div>
+			<div>
+				<h3>参与客户</h3>
+				<br/>
+				<table id="jqGrid"></table>
+				<div id="jqGridPager"></div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="${rc.contextPath}/js/fixture/campaignDetails.js?_${date.systemTime}"></script>
+</body>
+</html>

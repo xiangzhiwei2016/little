@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TOrderDao">
+
+    <resultMap type="com.fengdu.entity.TOrderEntity" id="tOrderMap">
+        <result property="id" column="id"/>
+        <result property="orderNo" column="order_no"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="clientId" column="client_id"/>
+        <result property="clientName" column="client_name"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="creator" column="creator"/>
+        <result property="modifier" column="modifier"/>
+        <result property="mobile" column="modifier"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TOrderEntity">
+		select
+			o.`id`,
+			c.`mobile`,
+			o.`order_no`,
+			o.`product_id`,
+			p.`product_name` as product_name,
+			o.`client_id`,
+			c.`client_name` as client_name,
+			o.`order_status`,
+			o.`create_time`,
+			o.`modify_time`,
+			o.`creator`,
+			o.`modifier`
+		from t_order o,t_product p,t_client c
+		where o.id = #{id} and o.product_id = p.id and o.client_id = c.id
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TOrderEntity">
+		select
+			o.`id`,
+			c.`mobile`,
+			o.`order_no`,
+			o.`product_id`,
+			p.`product_name` as product_name,
+			o.`client_id`,
+			c.`client_name` as client_name,
+			o.`order_status`,
+			o.`create_time`,
+			o.`modify_time`,
+			o.`creator`,
+			o.`modifier`
+		from t_order o,t_product p,t_client c
+		where o.product_id = p.id and o.client_id = c.id
+		<if test="name != null and name.trim() != ''">
+			AND c.`client_name` LIKE concat('%',#{name},'%')
+		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND c.`mobile` LIKE concat('%',#{mobile},'%')
+		</if>
+		<if test="merchantId != null">
+			AND o.merchant_id =  #{merchantId}
+		</if>
+		<if test="createTime != null">
+            <![CDATA[ and date(o.`create_time`) = date(#{createTime,jdbcType=TIMESTAMP})]]>
+        </if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by o.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from t_order o,t_product p,t_client c
+		where o.product_id = p.id and o.client_id = c.id
+        <if test="name != null and name.trim() != ''">
+            AND c.`client_name` LIKE concat('%',#{name},'%')
+        </if>
+        <if test="mobile != null and mobile.trim() != ''">
+			AND c.`mobile` LIKE concat('%',#{mobile},'%')
+		</if>
+        <if test="merchantId != null">
+			AND o.merchant_id =  #{merchantId}
+		</if>
+		<if test="createTime != null">
+            <![CDATA[ and date(o.`create_time`) = date(#{createTime,jdbcType=TIMESTAMP})]]>
+        </if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TOrderEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_order(
+			`order_no`,
+			`product_id`,
+			`client_id`,
+			`order_status`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`modifier`)
+		values(
+			#{orderNo},
+			#{productId},
+			#{clientId},
+			#{orderStatus},
+			#{createTime},
+			#{modifyTime},
+			#{creator},
+			#{modifier})
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TOrderEntity">
+		update t_order 
+		<set>
+			<if test="orderNo != null">`order_no` = #{orderNo}, </if>
+			<if test="productId != null">`product_id` = #{productId}, </if>
+			<if test="clientId != null">`client_id` = #{clientId}, </if>
+			<if test="orderStatus != null">`order_status` = #{orderStatus}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="modifyTime != null">`modify_time` = #{modifyTime}, </if>
+			<if test="creator != null">`creator` = #{creator}, </if>
+			<if test="modifier != null">`modifier` = #{modifier}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_order where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_order where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>

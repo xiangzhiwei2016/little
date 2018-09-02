@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fengdu.dao.TCaseDetailDao">
+
+    <resultMap type="com.fengdu.entity.TCaseDetailEntity" id="tCaseDetailMap">
+        <result property="id" column="id"/>
+        <result property="merchantId" column="merchant_id"/>
+        <result property="caseId" column="case_id"/>
+        <result property="caseName" column="case_name"/>
+        <result property="detailTitle" column="detail_title"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="creator" column="creator"/>
+        <result property="modifier" column="modifier"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.fengdu.entity.TCaseDetailEntity">
+		select
+    		d.`id`,
+    		d.`case_id`,
+    		c.`case_name`,
+    		d.`detail_title`,
+    		d.`description`,
+    		d.`create_time`,
+    		d.`modify_time`,
+    		d.`creator`,
+    		d.`modifier`
+		from t_case_detail d,t_case c,t_merchant m 
+		WHERE c.`merchant_id` = m.id and d.case_id=c.id and d.id = #{id}
+	</select>
+
+	<select id="queryList" resultType="com.fengdu.entity.TCaseDetailEntity">
+		select
+    		d.`id`,
+    		d.`case_id`,
+    		c.`case_name`,
+    		d.`detail_title`,
+    		d.`description`,
+    		d.`create_time`,
+    		d.`modify_time`,
+    		d.`creator`,
+    		d.`modifier`
+		from t_case_detail d,t_case c,t_merchant m 
+		WHERE d.case_id=c.id and c.`merchant_id` = m.id
+		<if test="name != null and name.trim() != ''">
+			AND c.`case_name` LIKE concat('%',#{name},'%')
+		</if>
+		<if test="merchantId != null">
+			AND c.merchant_id = #{merchantId}
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by d.id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*)
+		from t_case_detail d,t_case c,t_merchant m 
+		WHERE d.case_id=c.id and c.`merchant_id` = m.id
+        <if test="name != null and name.trim() != ''">
+            AND c.`case_name` LIKE concat('%',#{name},'%')
+        </if>
+        <if test="merchantId != null">
+			AND c.merchant_id = #{merchantId}
+		</if>
+	</select>
+	 
+	<insert id="save" parameterType="com.fengdu.entity.TCaseDetailEntity" useGeneratedKeys="true" keyProperty="id">
+		insert into t_case_detail(
+			`merchant_id`,
+			`case_id`,
+			`detail_title`,
+			`description`,
+			`create_time`,
+			`modify_time`,
+			`creator`,
+			`modifier`)
+		values(
+			#{merchantId},
+			#{caseId},
+			#{detailTitle},
+			#{description},
+			#{createTime},
+			#{modifyTime},
+			#{creator},
+			#{modifier})
+	</insert>
+	 
+	<update id="update" parameterType="com.fengdu.entity.TCaseDetailEntity">
+		update t_case_detail 
+		<set>
+			<if test="caseId != null">`case_id` = #{caseId}, </if>
+			<if test="detailTitle != null">`detail_title` = #{detailTitle}, </if>
+			<if test="description != null">`description` = #{description}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="modifyTime != null">`modify_time` = #{modifyTime}, </if>
+			<if test="creator != null">`creator` = #{creator}, </if>
+			<if test="modifier != null">`modifier` = #{modifier}</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete">
+		delete from t_case_detail where id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from t_case_detail where id in 
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+</mapper>
