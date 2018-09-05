@@ -83,7 +83,7 @@
                     </i-option>
                 </i-select>
                 <br/>
-                <a href="../fixture/tcategory.html">没找到合适的类别，前去分类管理</a>
+                <lable>没找到合适的类别，前去<a href="../fixture/tcategory.html">分类管理</a></lable>
             </Form-item>
             <Form-item label="会员价" prop="vipPrice">
                 <i-input v-model="tProduct.vipPrice" placeholder="会员价" class="ivu-input-smaller" />
@@ -107,7 +107,7 @@
                 <i-input v-model="tProduct.countNum" placeholder="数量"/>
             </Form-item> -->
             <Form-item label="标签" prop="tag">
-                <i-input v-model="tProduct.tag" placeholder="标签" class="ivu-input-smaller" />
+                <i-input v-model="tProduct.tag" placeholder="规格、型号方面" class="ivu-input-smaller" />
             </Form-item>
             <Form-item label="商品描述" prop="description">
                 <textarea v-model="tProduct.description" placeholder="描述" class="ivu-input-smaller" /></textarea>

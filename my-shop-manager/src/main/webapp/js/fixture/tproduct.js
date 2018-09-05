@@ -92,12 +92,28 @@ let vm = new Vue({
 		},
 		uploadList:[],
 		ruleValidate: {
-			name: [
-				{required: true, message: '名称不能为空', trigger: 'blur'}
+			productName: [
+				{required: true, message: '商品名称不能为空', trigger: 'blur'}
 			],
+			description: [
+					{required: true, message: '商品描述不能为空'}
+				],
+				
+			vipPrice: [
+					{required: true, message: '会员价不能为空且只能为数字'}
+				],
+				price: [
+							{required: true, message: '原价不能为空且只能为数字'}
+						],
+						tag: [
+							{required: true, message: '标签不能为空,若有多个用“，”隔开'}
+						],
 			categoryId: [
 						{required: true, message: '商品类别不能为空，请先选择'}
 					],
+					buystatus: [
+							{required: true, message: '是否支持网上购买不能为空，请先选择'}
+						],
 					unit: [
 									{required: true, message: '商品价格单位不能为空，请先选择'}
 								]
@@ -134,7 +150,10 @@ let vm = new Vue({
         saveOrUpdate: function (event) {
             let url = vm.tProduct.id == null ? "../tproduct/save" : "../tproduct/update";
             vm.tProduct.imgList = vm.uploadList;
-
+            if(vm.uploadList == null || vm.uploadList.length == 0){
+            	alert("至少上传1个商品图片");
+        		return;
+            }
 			$.ajax({
 				type: "POST",
 			    url: url,

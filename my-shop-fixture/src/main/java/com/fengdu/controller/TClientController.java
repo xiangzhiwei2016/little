@@ -1,8 +1,12 @@
 package com.fengdu.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import com.fengdu.service.TClientService;
 import com.fengdu.utils.PageUtils;
 import com.fengdu.utils.Query;
 import com.fengdu.utils.R;
+import com.fengdu.utils.excel.ExcelExport;
 
 /**
  * 客户表Controller
@@ -29,88 +34,89 @@ import com.fengdu.utils.R;
 @Controller
 @RequestMapping("tclient")
 public class TClientController {
-    @Autowired
-    private TClientService tClientService;
+	@Autowired
+	private TClientService tClientService;
 
-    /**
-     * 查看列表
-     */
-    @RequestMapping("/list")
-    @RequiresPermissions("tclient:list")
-    @ResponseBody
-    public R list(@RequestParam Map<String, Object> params) {
-        //查询列表数据
-        Query query = new Query(params);
+	/**
+	 * 查看列表
+	 */
+	@RequestMapping("/list")
+	@RequiresPermissions("tclient:list")
+	@ResponseBody
+	public R list(@RequestParam Map<String, Object> params) {
+		// 查询列表数据
+		Query query = new Query(params);
 
-        List<TClientEntity> tClientList = tClientService.queryList(query);
-        int total = tClientService.queryTotal(query);
+		List<TClientEntity> tClientList = tClientService.queryList(query);
+		int total = tClientService.queryTotal(query);
 
-        PageUtils pageUtil = new PageUtils(tClientList, total, query.getLimit(), query.getPage());
+		PageUtils pageUtil = new PageUtils(tClientList, total,
+				query.getLimit(), query.getPage());
 
-        return R.ok().put("page", pageUtil);
-    }
+		return R.ok().put("page", pageUtil);
+	}
 
-    /**
-     * 查看信息
-     */
-    @RequestMapping("/info/{id}")
-    @RequiresPermissions("tclient:info")
-    @ResponseBody
-    public R info(@PathVariable("id") Long id) {
-        TClientEntity tClient = tClientService.queryObject(id);
+	/**
+	 * 查看信息
+	 */
+	@RequestMapping("/info/{id}")
+	@RequiresPermissions("tclient:info")
+	@ResponseBody
+	public R info(@PathVariable("id") Long id) {
+		TClientEntity tClient = tClientService.queryObject(id);
 
-        return R.ok().put("tClient", tClient);
-    }
+		return R.ok().put("tClient", tClient);
+	}
 
-    /**
-     * 保存
-     */
-    @RequestMapping("/save")
-    @RequiresPermissions("tclient:save")
-    @ResponseBody
-    public R save(@RequestBody TClientEntity tClient) {
-        tClientService.save(tClient);
+	/**
+	 * 保存
+	 */
+	@RequestMapping("/save")
+	@RequiresPermissions("tclient:save")
+	@ResponseBody
+	public R save(@RequestBody TClientEntity tClient) {
+		tClientService.save(tClient);
 
-        return R.ok();
-    }
+		return R.ok();
+	}
 
-    /**
-     * 修改
-     */
-    @RequestMapping("/update")
-    @RequiresPermissions("tclient:update")
-    @ResponseBody
-    public R update(@RequestBody TClientEntity tClient) {
-        tClientService.update(tClient);
+	/**
+	 * 修改
+	 */
+	@RequestMapping("/update")
+	@RequiresPermissions("tclient:update")
+	@ResponseBody
+	public R update(@RequestBody TClientEntity tClient) {
+		tClientService.update(tClient);
 
-        return R.ok();
-    }
+		return R.ok();
+	}
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
-    @RequiresPermissions("tclient:delete")
-    @ResponseBody
-    public R delete(@RequestBody Long[]ids) {
-        tClientService.deleteBatch(ids);
+	/**
+	 * 删除
+	 */
+	@RequestMapping("/delete")
+	@RequiresPermissions("tclient:delete")
+	@ResponseBody
+	public R delete(@RequestBody Long[] ids) {
+		tClientService.deleteBatch(ids);
 
-        return R.ok();
-    }
+		return R.ok();
+	}
 
-    /**
-     * 查看所有列表
-     */
-    @RequestMapping("/queryAll")
-    @ResponseBody
-    public R queryAll(@RequestParam Map<String, Object> params) {
+	/**
+	 * 查看所有列表
+	 */
+	@RequestMapping("/queryAll")
+	@ResponseBody
+	public R queryAll(@RequestParam Map<String, Object> params) {
 
-        List<TClientEntity> list = tClientService.queryList(params);
+		List<TClientEntity> list = tClientService.queryList(params);
 
-        return R.ok().put("list", list);
-    }
-    
-    /**
+		return R.ok().put("list", list);
+	}
+
+	/**
 	 * 修改状态
 	 */
 	@RequestMapping("/toSpread")
@@ -119,26 +125,81 @@ public class TClientController {
 		tClientService.toSpread(id);
 		return R.ok();
 	}
-    
-	  /**
-     * 根据clientId查询所有推广进来的人
-     * 推广总人数
-     * @param goodsId
-     * @return
-     */
-    @RequestMapping("/queryByClientId/{clientId}")
-    @ResponseBody
-    public R queryByClientId(@PathVariable("clientId") String clientId) {
-        Map<String, Object> params = new HashMap<>();
-        TClientEntity tClient = tClientService.queryObject(Long.parseLong(clientId));
-        params.put("upClientId", clientId);
-        // 总推广人数
-        int total = tClientService.queryTotal(params);
-        // 推广的会员数(用户类型（0.推广员，1.会员，2潜在用户）)
-        params.put("clientType", "1");
-        List<TClientEntity> list = tClientService.queryList(params);
-        tClient.setTotalCount(String.valueOf(total));
-        tClient.setMemberCount(String.valueOf(list.size()));
-        return R.ok().put("tClient", tClient);
-    }
+
+	/**
+	 * 根据clientId查询所有推广进来的人 推广总人数
+	 * 
+	 * @param goodsId
+	 * @return
+	 */
+	@RequestMapping("/queryByClientId/{clientId}")
+	@ResponseBody
+	public R queryByClientId(@PathVariable("clientId") String clientId) {
+		Map<String, Object> params = new HashMap<>();
+		TClientEntity tClient = tClientService.queryObject(Long
+				.parseLong(clientId));
+		params.put("upClientId", clientId);
+		// 总推广人数
+		int total = tClientService.queryTotal(params);
+		// 推广的会员数(用户类型（0.推广员，1.会员，2潜在用户）)
+		params.put("clientType", "1");
+		List<TClientEntity> list = tClientService.queryList(params);
+		tClient.setTotalCount(String.valueOf(total));
+		tClient.setMemberCount(String.valueOf(list.size()));
+		return R.ok().put("tClient", tClient);
+	}
+
+	/**
+	 * 导出会员
+	 */
+	@RequestMapping("/export")
+	public R export(@RequestParam Map<String, Object> params,
+			HttpServletResponse response) {
+
+		List<TClientEntity> tClientList = tClientService.queryList(params);
+
+		ExcelExport ee = new ExcelExport("用户列表");
+
+		String[] header = new String[] { "用户名称", "用户类别", "用户渠道", "手机号码" };
+
+		List<Map<String, Object>> list = new ArrayList<>();
+
+		if (tClientList != null && tClientList.size() != 0) {
+			for (TClientEntity client : tClientList) {
+				LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+				map.put("ClientName", client.getClientName());
+				map.put("ClientType",
+						transferClientType(client.getClientType()));
+				map.put("Channel", transferChannel(client.getChannel()));
+				map.put("MOBILE", client.getMobile());
+				list.add(map);
+			}
+		}
+
+		ee.addSheetByMap("用户列表", list, header);
+		ee.export(response);
+		return R.ok();
+	}
+
+	private String transferClientType(String key) {
+		String result = "";
+		if ("0".equals(key)) {
+			result = "推广员";
+		} else if ("1".equals(key)) {
+			result = "会员";
+		} else if ("2".equals(key)) {
+			result = "潜在用户";
+		}
+		return result;
+	}
+
+	private String transferChannel(String key) {
+		String result = "";
+		if ("0".equals(key)) {
+			result = "门店扫码";
+		} else if ("1".equals(key)) {
+			result = "微信转发";
+		}
+		return result;
+	}
 }
