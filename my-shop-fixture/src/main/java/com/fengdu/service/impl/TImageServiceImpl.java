@@ -11,6 +11,7 @@ import com.fengdu.constants.Constants;
 import com.fengdu.dao.TImageDao;
 import com.fengdu.entity.TImageEntity;
 import com.fengdu.service.TImageService;
+import com.fengdu.utils.DateUtils;
 import com.fengdu.utils.ShiroUtils;
 
 /**
@@ -70,6 +71,7 @@ public class TImageServiceImpl implements TImageService {
     	for(TImageEntity image : images){
     		image.setIkey(id);
     		image.setType(type);
+    		image.setCreateTime(DateUtils.currentDate());
         	save(image);
     	}
     }

@@ -164,13 +164,13 @@
 			<if test="modifyTime != null">`modify_time` = #{modifyTime}, </if>
 			<if test="creator != null">`creator` = #{creator}, </if>
 			<if test="modifier != null">`modifier` = #{modifier},</if>
-			<if test="description != null">`type` = #{type}, </if>
-			<if test="effectTime != null">`deposit` = #{deposit}, </if>
-			<if test="expiryTime != null">`discount` = #{discount}, </if>
-			<if test="createTime != null">`grouper` = #{group}, </if>
-			<if test="modifyTime != null">`money_full` = #{moneyFull}, </if>
-			<if test="creator != null">`money_back` = #{moneyBack}, </if>
-			<if test="modifier != null">`gift` = #{gift}</if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="deposit != null">`deposit` = #{deposit}, </if>
+			<if test="discount != null">`discount` = #{discount}, </if>
+			<if test="group != null">`grouper` = #{group}, </if>
+			<if test="moneyFull != null">`money_full` = #{moneyFull}, </if>
+			<if test="moneyBack != null">`money_back` = #{moneyBack}, </if>
+			<if test="gift != null">`gift` = #{gift}</if>
 		</set>
 		where id = #{id}
 	</update>

@@ -47,10 +47,32 @@ let vm = new Vue({
         showList: true,
         title: null,
         visible: false,
+        tCaseDetail0Flag: false,
+        tCaseDetail1Flag: false,
+        tCaseDetail2Flag: false,
 		tCase: {
 			imgList:[],
 			caseDetailList:[]
 		},
+		tCaseDetail0: {
+			detailTitle:"",
+			description:"",
+			uploadDetailList:[],
+			imgList:[]
+		},
+		tCaseDetail1: {
+			detailTitle:"",
+			description:"",
+			uploadDetailList:[],
+			imgList:[]
+		},
+		tCaseDetail2: {
+			detailTitle:"",
+			description:"",
+			uploadDetailList:[],
+			imgList:[]
+		},
+		uploadDetailList:[],
 		caseDetailList:[],
 		uploadList:[],
 		ruleValidate: {
@@ -70,10 +92,21 @@ let vm = new Vue({
 			vm.showList = false;
 			vm.title = "新增";
 			vm.tCase = {};
+			vm.tCaseDetail0={};
+			vm.tCaseDetail0Flag= true;
+			vm.tCaseDetail1Flag=false;
+	        vm.tCaseDetail2Flag= false;
 			vm.uploadList = [];
 			vm.caseDetailList=[];
 		},
 		update: function (event) {
+			vm.tCaseDetail0Flag= false;
+			vm.tCaseDetail1Flag=false;
+	        vm.tCaseDetail2Flag= false;
+	        vm.caseDetailList=[];
+	        vm.tCaseDetail0={};
+	        vm.tCaseDetail1={};
+	        vm.tCaseDetail2={};
             let id = getSelectedRow();
 			if (id == null) {
 				return;
@@ -86,8 +119,11 @@ let vm = new Vue({
 		saveOrUpdate: function (event) {
             let url = vm.tCase.id == null ? "../tcase/save" : "../tcase/update";
             vm.tCase.imgList = vm.uploadList;
-            vm.tCase.caseDetailList = vm.caseDetailList;
-            console.log("save:"+vm.tCase);
+            vm.tCase.caseDetailList = [];
+            vm.tCase.caseDetailList.push(vm.tCaseDetail0);
+            vm.tCase.caseDetailList.push(vm.tCaseDetail1);
+            vm.tCase.caseDetailList.push(vm.tCaseDetail2);
+            console.log(vm.tCase);
 			$.ajax({
 				type: "POST",
 			    url: url,
@@ -133,8 +169,21 @@ let vm = new Vue({
                 vm.tCase = r.tCase;
                 console.log(r.tCase);
                 // 案例详情
-                vm.caseDetailList = r.tCase.caseDetailList;
-                console.log(vm.caseDetailList);
+                for(var i=0;i< r.tCase.caseDetailList.length;i++){
+                	if(!vm.tCaseDetail0Flag){
+                		vm.tCaseDetail0Flag = true;
+                		vm.tCaseDetail0 = r.tCase.caseDetailList[i];
+                		console.log(vm.tCaseDetail0);
+                	}else if(!vm.tCaseDetail1Flag){
+                		vm.tCaseDetail1Flag = true;
+                		vm.tCaseDetail1 = r.tCase.caseDetailList[i];
+                		console.log(vm.tCaseDetail1);
+                	}else if(!vm.tCaseDetail2Flag){
+                		vm.tCaseDetail2Flag = true;
+                		vm.tCaseDetail2 = r.tCase.caseDetailList[i];
+                		console.log(vm.tCaseDetail2);
+                	}
+                }
             });
 		},
 		getImagesGallery: function (id) {//获取图片
@@ -145,16 +194,55 @@ let vm = new Vue({
                 }
             });
         },
-        createS:function(){
-        	var tCaseDetail0 =  {
-			detailTitle:"",
-			description:"",
-			uploadDetailList:[]
-		};
-        	vm.caseDetailList.push(tCaseDetail0);
+        createDiv: function(){
+        	var tCaseDetail = {
+        			uploadDetailList:[]
+        	};
+        	vm.tCase.caseDetailList = vm.caseDetailList;
+        	vm.tCase.caseDetailList.push(tCaseDetail);
         },
-        del0:function(index){
-        	vm.caseDetailList.splice(index, 1);
+        create: function(){
+        	if(!vm.tCaseDetail0Flag){
+        		vm.tCaseDetail0Flag = true;
+        	}else if(!vm.tCaseDetail1Flag){
+        		vm.tCaseDetail1Flag = true;
+        	}else if(!vm.tCaseDetail2Flag){
+        		vm.tCaseDetail2Flag = true;
+        	}else{
+        		alert("最多只能上传3个案例详情");
+        		return;
+        	}
+        },
+        delDiv:function(index){
+        	if(vm.tCase.caseDetailList.length == 1){
+        		alert("至少需要上传1个案例详情");
+        		return;
+        	}
+        	vm.tCase.caseDetailList.splice(index,1);
+        },
+        del0:function(){
+        	if(vm.tCaseDetail1Flag == false && vm.tCaseDetail2Flag == false){
+        		alert("至少需要上传1个案例详情");
+        		return;
+        	}
+        	vm.tCaseDetail0Flag=false;
+        	vm.tCaseDetail0 = {};
+        },
+        del1:function(){
+        	if(vm.tCaseDetail0Flag == false && vm.tCaseDetail2Flag == false){
+        		alert("至少需要上传1个案例详情");
+        		return;
+        	}
+        	vm.tCaseDetail1Flag=false;
+        	vm.tCaseDetail1 = {};
+        },
+        del2:function(){
+        	if(vm.tCaseDetail1Flag == false && vm.tCaseDetail0Flag == false){
+        		alert("至少需要上传1个案例详情");
+        		return;
+        	}
+        	vm.tCaseDetail2Flag=false;
+        	vm.tCaseDetail2 = {};
         },
 		reload: function (event) {
 			vm.showList = true;
@@ -173,21 +261,12 @@ let vm = new Vue({
       handleRemove(file) {
           // 从 upload 实例删除数据
           const fileList = this.uploadList;
-          if(fileList.indexOf(file) >= 0){
-        	  this.uploadList.splice(fileList.indexOf(file), 1);
-          }else{
-        	  for(var i=0;i<vm.caseDetailList.length;i++){
-        		  var fileList2 = vm.caseDetailList[i].uploadDetailList;
-        		  console.log(fileList2);
-        		  for(var y=0;y<fileList2.length;y++){
-        			  if(fileList2.indexOf(file) >= 0){
-        				  fileList2.splice(fileList2.indexOf(file), 1); 
-        			  }
-        		  }
-        	  }
-        	  
-          }
-         
+          this.uploadList.splice(fileList.indexOf(file), 1);
+      },
+      handleRemove2(file) {
+          // 从 upload 实例删除数据
+          const fileList = this.uploadDetailList;
+          this.uploadDetailList.splice(fileList.indexOf(file), 1);
       },
       handleSuccess(res, file) {
           // 因为上传过程为实例，这里模拟添加 url
@@ -195,11 +274,32 @@ let vm = new Vue({
           file.name = res.url;
           vm.uploadList.add(file);
       },
-      handleSuccess0(index,res, file) {
+      handleSuccess0(res, file) {
           // 因为上传过程为实例，这里模拟添加 url
           file.imgUrl = res.url;
           file.name = res.url;
-          vm.caseDetailList[index].uploadDetailList.push(file);
+          if(null == vm.tCaseDetail0.uploadDetailList || undefined == vm.tCaseDetail0.uploadDetailList){
+        	  vm.tCaseDetail0.uploadDetailList = [];
+          }
+          vm.tCaseDetail0.uploadDetailList.push(file);
+      },
+      handleSuccess1(res, file) {
+          // 因为上传过程为实例，这里模拟添加 url
+          file.imgUrl = res.url;
+          file.name = res.url;
+          if(null == vm.tCaseDetail1.uploadDetailList || undefined == vm.tCaseDetail1.uploadDetailList){
+        	  vm.tCaseDetail1.uploadDetailList = [];
+          }
+          vm.tCaseDetail1.uploadDetailList.push(file);
+      },
+      handleSuccess2(res, file) {
+          // 因为上传过程为实例，这里模拟添加 url
+          file.imgUrl = res.url;
+          file.name = res.url;
+          if(null == vm.tCaseDetail2.uploadDetailList || undefined == vm.tCaseDetail2.uploadDetailList){
+        	  vm.tCaseDetail2.uploadDetailList = [];
+          }
+          vm.tCaseDetail2.uploadDetailList.push(file);
       },
       handleBeforeUpload() {
           const check = this.uploadList.length < 1;
@@ -249,5 +349,6 @@ let vm = new Vue({
 	},
 	mounted() {
       this.uploadList = this.$refs.upload.fileList;
+      this.uploadDetailList = this.$refs.uploadDetail.fileList;
   }
 });
