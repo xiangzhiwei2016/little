@@ -141,6 +141,9 @@
 		<if test="merchantId != null">
 			AND o.merchant_id =  #{merchantId}
 		</if>
+		<if test="orderType != null and orderType.trim() != ''">
+			AND o.`order_type`= #{orderType}
+		</if>
 		<if test="mobile != null and mobile.trim() != ''">
 			AND t.`mobile` LIKE concat('%',#{mobile},'%')
 		</if>
@@ -171,6 +174,9 @@
 		</if>
 		<if test="merchantId != null">
 			AND o.merchant_id =  #{merchantId}
+		</if>
+		<if test="orderType != null and orderType.trim() != ''">
+			AND o.`order_type`= #{orderType}
 		</if>
 		<if test="addTime != null">
             <![CDATA[ and date(o.`add_time`) = date(#{addTime,jdbcType=TIMESTAMP})]]>

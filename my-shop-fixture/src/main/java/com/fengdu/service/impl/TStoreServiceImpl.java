@@ -72,7 +72,7 @@ public class TStoreServiceImpl implements TStoreService {
     	tStore.setMerchantId(ShiroUtils.getUserId());
     	String address = tStore.getAddress();
     	if(StringUtils.isNotEmpty(address)){
-    		String result = GetLatAndLngByBaiduUtils.getLarLng(address);
+    		String result = GetLatAndLngByBaiduUtils.getLarLngByTx(address);
     		JSONObject object = JSONObject.parseObject(result);
     		tStore.setLng(object.getString("lng"));
     		tStore.setLat(object.getString("lat"));
@@ -92,7 +92,7 @@ public class TStoreServiceImpl implements TStoreService {
     	tStore.setModifier(ShiroUtils.getUserName());
     	String address = tStore.getAddress();
     	if(StringUtils.isNotEmpty(address)){
-    		String result = GetLatAndLngByBaiduUtils.getLarLng(address);
+    		String result = GetLatAndLngByBaiduUtils.getLarLngByTx(address);
     		JSONObject object = JSONObject.parseObject(result);
     		tStore.setLng(object.getString("lng"));
     		tStore.setLat(object.getString("lat"));

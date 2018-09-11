@@ -4,24 +4,43 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * 订单状态
+ * @author xiangzhiwei
+ *
+ */
 public enum OrderStatusEnum {
-	ORDER_CANCLE ("0","取消订单"),
-	ORDER_HANDLESEL ("1","已交定金");
+	ORDER_NOT_PAYED (0,"未付款"),
+	ORDER_WATING (201,"等待发货"),
+	ORDER_RECIVEDD (300,"待收货"),
+	ORDER_FINISH (301,"已完成"),
+	ORDER_PAYED (200,"已付款"),
+	ORDER_CANCLE (101,"已取消"),
+	ORDER_PAYED_CANCLE (401,"支付后取消"),
+	ORDER_BACK (402,"已退货");
 
-    private String    code;
+
+    private int    code;
 
     private String text;
 
-    private OrderStatusEnum(String code, String text) {
+    private OrderStatusEnum(int code, String text) {
         this.code = code;
         this.text = text;
     }
 
     public static OrderStatusEnum getEnumByCode(int code) {
         for (OrderStatusEnum an : OrderStatusEnum.values()) {
-            if (an.getCode().equals(code))
+            if (an.getCode() == code)
                 return an;
+        }
+        return null;
+    }
+    
+    public static String getTextByCode(int code) {
+        for (OrderStatusEnum an : OrderStatusEnum.values()) {
+            if (an.getCode() == code)
+                return an.getText();
         }
         return null;
     }
@@ -35,7 +54,7 @@ public enum OrderStatusEnum {
         return null;
     }
 
-    public String getCode() {
+    public int getCode() {
         return this.code;
     }
 

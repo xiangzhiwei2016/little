@@ -9,7 +9,10 @@
 	<div v-show="showList">
         <Row :gutter="16">
             <i-col span="4">
-                <i-input v-model="q.name" @on-enter="query" placeholder="用户名称"/>
+                <i-input v-model="q.name" @on-enter="query" placeholder="微信昵称"/>
+            </i-col>
+            <i-col span="4">
+                <i-input v-model="q.mobile" @on-enter="query" placeholder="手机号"/>
             </i-col>
             <i-col span="4">
                   <i-select v-model="q.clientType" placeholder="用户身份" filterable>

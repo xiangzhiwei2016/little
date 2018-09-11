@@ -13,11 +13,13 @@ $(function () {
                 return transPhoto(index);
             }},
 			{label: '手机号', name: 'mobile', index: 'mobile',align:"center",  width: 80},
-			{label: '订单状态', name: 'orderStatus', index: 'order_status',align:"center",  width: 80,
+			{label: '订单类型', name: 'orderType', index: 'order_type',align:"center",  width: 80,
 				 formatter: function (value) {
-	                    return transferStatus(value);
+	                    return transferOrderType(value);
 	                }
 			},
+			{label: '订单状态', name: 'orderStatusDesc', index: 'order_status',align:"center",  width: 80},
+			{label: '金额', name: 'totalFee', index: 'total_fee',align:"center",  width: 80},
 			{label: '提交订单时间', name: 'addTime', index: 'add_time',align:"center",  width: 80},
 			{label: '操作', name: 'orderStatus', index: 'operate',align:"center",  width: 80,
 				 formatter: function (value,row,index) {
@@ -57,8 +59,22 @@ var orderStatus = [ {
 	"key" : "1",
 	"value" : "已交定金"
 } ];
+//订单类型
+var orderType = [ 
+                  {
+	"key" : null,
+	"value" : "全部"
+},{
+	"key" : "1",
+	"value" : "定金"
+}, {
+	"key" : "2",
+	"value" : "下单"
+} ];
+
 // 订单状态转换
 function transferStatus(value){
+	console.log(value);
 	if(null == value || undefined == value || ''== value){
 		return '-';
 	}
@@ -70,6 +86,18 @@ function transferStatus(value){
 	return '-';
 };
 
+//订单类型转换
+function transferOrderType(value){
+	if(null == value || undefined == value || ''== value){
+		return '-';
+	}
+	for(var x in orderType){
+		if(orderType[x].key == value){
+			return orderType[x].value;
+		}
+	}
+	return '-';
+};
 /**
  * 翻译头像
  * @param url
@@ -90,8 +118,9 @@ function transPhoto(obj) {
 
 // 操作
 function doOperate(value,id){
+	console.log(value);
 	var result = "-";
-	if(1 == value){
+	if(200 == value){
 		result = "<a href='#' onclick='updateStatus("+id+")'>取消订单</a> "
 	}
 	return result;
@@ -130,7 +159,8 @@ let vm = new Vue({
 			]
 		},
 		q: {
-		    mobile: ''
+		    mobile: '',
+		    orderType: ''
 		}
 	},
 	methods: {
@@ -203,7 +233,7 @@ let vm = new Vue({
 			vm.showList = true;
             let page = $("#jqGrid").jqGrid('getGridParam', 'page');
 			$("#jqGrid").jqGrid('setGridParam', {
-                postData: {'mobile': vm.q.mobile},
+                postData: {'mobile': vm.q.mobile,"orderType":vm.q.orderType},
                 page: page
             }).trigger("reloadGrid");
             vm.handleReset('formValidate');

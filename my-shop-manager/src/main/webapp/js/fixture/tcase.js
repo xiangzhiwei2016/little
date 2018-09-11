@@ -47,10 +47,12 @@ let vm = new Vue({
         showList: true,
         title: null,
         visible: false,
+        isDisabled: false,
 		tCase: {
 			imgList:[],
 			caseDetailList:[]
 		},
+		fileList:[],
 		caseDetailList:[],
 		uploadList:[],
 		ruleValidate: {
@@ -68,18 +70,32 @@ let vm = new Vue({
 		},
 		add: function () {
 			vm.showList = false;
+			vm.isDisabled = false;
 			vm.title = "新增";
 			vm.tCase = {};
 			vm.uploadList = [];
 			vm.caseDetailList=[];
+			vm.createS();
 		},
 		update: function (event) {
             let id = getSelectedRow();
 			if (id == null) {
 				return;
 			}
+			vm.isDisabled = false;
 			vm.showList = false;
             vm.title = "修改";
+            vm.getImagesGallery(id);
+            vm.getInfo(id);
+		},
+		detail: function (event) {
+            let id = getSelectedRow();
+			if (id == null) {
+				return;
+			}
+			vm.showList = false;
+			vm.isDisabled = true;
+            vm.title = "详情";
             vm.getImagesGallery(id);
             vm.getInfo(id);
 		},
@@ -145,15 +161,22 @@ let vm = new Vue({
                 }
             });
         },
+        createDefault:function(){
+        	return {
+    			detailTitle:"",
+    			description:"",
+    			uploadDetailList:[]
+    		};
+        },
         createS:function(){
-        	var tCaseDetail0 =  {
-			detailTitle:"",
-			description:"",
-			uploadDetailList:[]
-		};
+        	var tCaseDetail0 = vm.createDefault();
         	vm.caseDetailList.push(tCaseDetail0);
         },
         del0:function(index){
+        	if(vm.caseDetailList.length ==1){
+        		alert("至少需要上传一个案例详情");
+        		return;
+        	}
         	vm.caseDetailList.splice(index, 1);
         },
 		reload: function (event) {

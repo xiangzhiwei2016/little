@@ -5,6 +5,7 @@ $(function () {
         colModel: [
 			{label: 'id', name: 'id', index: 'id', key: true, hidden: true},
 		/*	{label: '小程序ID', name: 'appId', index: 'app_id', align:"center", width: 80},*/
+			{label: '商户ID', name: 'id', index: 'merchant_id', align:"center", width: 80},
 			{label: '商户名称', name: 'merchantName', index: 'merchant_name', align:"center", width: 80},
 			{label: '用户名', name: 'mcLoginName', index: 'mc_login_name', align:"center", width: 80},
 			{label: '密码', name: 'passWord', index: 'pass_word', align:"center", width: 80},

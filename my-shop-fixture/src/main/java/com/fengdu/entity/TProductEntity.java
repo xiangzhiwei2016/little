@@ -38,6 +38,8 @@ public class TProductEntity implements Serializable {
     private BigDecimal countNum;
     //标签
     private String tag;
+    private String tag2;
+    private String tagDesc;
     //描述
     private String description;
     //商品状态
@@ -283,5 +285,21 @@ public class TProductEntity implements Serializable {
 
 	public void setPriceStr(String priceStr) {
 		this.priceStr = priceStr;
+	}
+
+	public String getTag2() {
+		return tag2;
+	}
+
+	public void setTag2(String tag2) {
+		this.tag2 = tag2;
+	}
+
+	public String getTagDesc() {
+		return tagDesc;
+	}
+
+	public void setTagDesc(String tagDesc) {
+		this.tagDesc = tagDesc;
 	}
 }

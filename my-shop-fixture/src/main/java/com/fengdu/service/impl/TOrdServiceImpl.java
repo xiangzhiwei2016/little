@@ -10,7 +10,6 @@ import com.fengdu.constants.Constants;
 import com.fengdu.constants.OrderStatusEnum;
 import com.fengdu.dao.TOrdDao;
 import com.fengdu.entity.TOrdEntity;
-import com.fengdu.entity.TOrderEntity;
 import com.fengdu.service.TOrdService;
 import com.fengdu.utils.ShiroUtils;
 
@@ -66,8 +65,7 @@ public class TOrdServiceImpl implements TOrdService {
     @Override
 	public int updateStatus(Integer id) {
     	TOrdEntity entity = this.queryObject(id);
-		// 0取消订单 1已交定金
-		entity.setOrderStatus(Integer.parseInt(OrderStatusEnum.ORDER_CANCLE.getCode()));
+		entity.setOrderStatus(OrderStatusEnum.ORDER_CANCLE.getCode());
 		return update(entity);
 	}
 }

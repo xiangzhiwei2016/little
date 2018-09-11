@@ -160,7 +160,7 @@ public class TClientController {
 
 		ExcelExport ee = new ExcelExport("用户列表");
 
-		String[] header = new String[] { "用户名称", "用户类别", "用户渠道", "手机号码" };
+		String[] header = new String[] { "用户名称", "用户类别", "用户渠道", "手机号码","关注小程序时间" };
 
 		List<Map<String, Object>> list = new ArrayList<>();
 
@@ -172,6 +172,7 @@ public class TClientController {
 						transferClientType(client.getClientType()));
 				map.put("Channel", transferChannel(client.getChannel()));
 				map.put("MOBILE", client.getMobile());
+				map.put("registerTime", client.getRegisterTime());
 				list.add(map);
 			}
 		}

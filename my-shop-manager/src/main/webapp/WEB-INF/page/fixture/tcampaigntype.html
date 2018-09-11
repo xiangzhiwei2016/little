@@ -100,8 +100,12 @@
 <div id="Ztfxj" v-show="ishowZtfxj">
 		<div style="margin-top:10%;">
 		<i-form ref="formValidate" :model="tCampaignType" :rules="ruleValidate" :label-width="80">
-            <Form-item label="组团（人）" prop="group">
-                <i-input v-model="tCampaignType.group" style="width:60%" placeholder="组团人数（人）"/>
+			<!-- 暂时版本 -->
+            <Form-item label="组团（人）" prop="description">
+                <i-input v-model="tCampaignType.description" style="width:60%" placeholder="组团人数（人）"/>
+            </Form-item>
+            <Form-item label="订金（元）" prop="deposit">
+                <i-input v-model="tCampaignType.deposit" style="width:60%" placeholder="订金（元）"/>
             </Form-item>
             <Form-item label="满额（元）" prop="moneyFull">
                 <i-input v-model="tCampaignType.moneyFull" style="width:60%" placeholder="满额（元）"/>

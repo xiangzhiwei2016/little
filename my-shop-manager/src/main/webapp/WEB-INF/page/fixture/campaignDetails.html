@@ -10,8 +10,11 @@
 				<h3>活动详情</h3>
 				<div v-show="ishowZtfxj">
 				<i-form :model="tCampaignType" :label-width="80">
-		            <Form-item label="组团（人）" prop="group">
-		                <i-input v-model="tCampaignType.group" disabled="true" style="width:40%;" placeholder="组团人数（人）"/>
+		            <Form-item label="组团（人）" prop="description">
+		                <i-input v-model="tCampaignType.description" disabled="true" style="width:40%;" placeholder="组团人数（人）"/>
+		            </Form-item>
+		             <Form-item label="订金（元）" prop="deposit">
+		                <i-input v-model="tCampaignType.deposit" disabled="true" style="width:40%;" placeholder="订金（元）"/>
 		            </Form-item>
 		            <Form-item label="满额（元）" prop="moneyFull">
 		                <i-input v-model="tCampaignType.moneyFull" disabled="true" style="width:40%" placeholder="满额（元）"/>

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.fengdu.entity.MainCountEntity;
 import com.fengdu.service.TClientService;
 import com.fengdu.service.TOrdService;
-import com.fengdu.service.TOrderService;
 import com.fengdu.utils.DateUtils;
 import com.fengdu.utils.R;
 
@@ -55,6 +54,7 @@ public class MainCountController {
     	int yesterdayForce = tClientService.queryTotal(map);
     	countEntity.setYesterdayForce(yesterdayForce);
     	// 昨日浏览人数
+    	map.put("registerTime", null);
     	map.put("lastLoginTime", yesterDay);
     	int yesterdayBrowse = tClientService.queryTotal(map);
     	countEntity.setYesterdayBrowse(yesterdayBrowse);

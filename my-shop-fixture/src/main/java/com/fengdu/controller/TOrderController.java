@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.fengdu.constants.OrderStatusEnum;
 import com.fengdu.entity.TOrdEntity;
 import com.fengdu.service.TOrdService;
 import com.fengdu.utils.PageUtils;
@@ -28,10 +29,9 @@ import com.fengdu.utils.R;
 @Controller
 @RequestMapping("torder")
 public class TOrderController {
-    @Autowired
-    private TOrdService tOrdService;
+	@Autowired
+	private TOrdService tOrdService;
 
-	
 	/**
 	 * 修改状态
 	 */
@@ -42,84 +42,91 @@ public class TOrderController {
 		return R.ok();
 	}
 
+	/**
+	 * 查看列表
+	 */
+	@RequestMapping("/list")
+	@RequiresPermissions("torder:list")
+	@ResponseBody
+	public R list(@RequestParam Map<String, Object> params) {
+		// 查询列表数据
+		Query query = new Query(params);
 
+		List<TOrdEntity> tOrdList = tOrdService.queryList(query);
+		for (TOrdEntity entity : tOrdList) {
+			int status = entity.getOrderStatus();
+			entity.setOrderStatusDesc(OrderStatusEnum.getTextByCode(status));
+		}
+		int total = tOrdService.queryTotal(query);
 
-    /**
-     * 查看列表
-     */
-    @RequestMapping("/list")
-    @RequiresPermissions("torder:list")
-    @ResponseBody
-    public R list(@RequestParam Map<String, Object> params) {
-        //查询列表数据
-        Query query = new Query(params);
+		PageUtils pageUtil = new PageUtils(tOrdList, total, query.getLimit(),
+				query.getPage());
 
-        List<TOrdEntity> tOrdList = tOrdService.queryList(query);
-        int total = tOrdService.queryTotal(query);
+		return R.ok().put("page", pageUtil);
+	}
 
-        PageUtils pageUtil = new PageUtils(tOrdList, total, query.getLimit(), query.getPage());
+	/**
+	 * 查看信息
+	 */
+	@RequestMapping("/info/{id}")
+	@RequiresPermissions("torder:info")
+	@ResponseBody
+	public R info(@PathVariable("id") Integer id) {
+		TOrdEntity tOrd = tOrdService.queryObject(id);
+		int status = tOrd.getOrderStatus();
+		tOrd.setOrderStatusDesc(OrderStatusEnum.getTextByCode(status));
+		return R.ok().put("tOrder", tOrd);
+	}
 
-        return R.ok().put("page", pageUtil);
-    }
+	/**
+	 * 保存
+	 */
+	@RequestMapping("/save")
+	@RequiresPermissions("torder:save")
+	@ResponseBody
+	public R save(@RequestBody TOrdEntity tOrd) {
+		tOrdService.save(tOrd);
 
-    /**
-     * 查看信息
-     */
-    @RequestMapping("/info/{id}")
-    @RequiresPermissions("torder:info")
-    @ResponseBody
-    public R info(@PathVariable("id") Integer id) {
-        TOrdEntity tOrd = tOrdService.queryObject(id);
+		return R.ok();
+	}
 
-        return R.ok().put("tOrder", tOrd);
-    }
+	/**
+	 * 修改
+	 */
+	@RequestMapping("/update")
+	@RequiresPermissions("torder:update")
+	@ResponseBody
+	public R update(@RequestBody TOrdEntity tOrd) {
+		tOrdService.update(tOrd);
 
-    /**
-     * 保存
-     */
-    @RequestMapping("/save")
-    @RequiresPermissions("torder:save")
-    @ResponseBody
-    public R save(@RequestBody TOrdEntity tOrd) {
-        tOrdService.save(tOrd);
+		return R.ok();
+	}
 
-        return R.ok();
-    }
+	/**
+	 * 删除
+	 */
+	@RequestMapping("/delete")
+	@RequiresPermissions("tord:delete")
+	@ResponseBody
+	public R delete(@RequestBody Integer[] ids) {
+		tOrdService.deleteBatch(ids);
 
-    /**
-     * 修改
-     */
-    @RequestMapping("/update")
-    @RequiresPermissions("torder:update")
-    @ResponseBody
-    public R update(@RequestBody TOrdEntity tOrd) {
-        tOrdService.update(tOrd);
+		return R.ok();
+	}
 
-        return R.ok();
-    }
+	/**
+	 * 查看所有列表
+	 */
+	@RequestMapping("/queryAll")
+	@ResponseBody
+	public R queryAll(@RequestParam Map<String, Object> params) {
 
-    /**
-     * 删除
-     */
-    @RequestMapping("/delete")
-    @RequiresPermissions("tord:delete")
-    @ResponseBody
-    public R delete(@RequestBody Integer[]ids) {
-        tOrdService.deleteBatch(ids);
-
-        return R.ok();
-    }
-
-    /**
-     * 查看所有列表
-     */
-    @RequestMapping("/queryAll")
-    @ResponseBody
-    public R queryAll(@RequestParam Map<String, Object> params) {
-
-        List<TOrdEntity> list = tOrdService.queryList(params);
-
-        return R.ok().put("list", list);
-    }
+		List<TOrdEntity> list = tOrdService.queryList(params);
+		for (TOrdEntity entity : list) {
+			int status = entity.getOrderStatus();
+			entity.setOrderStatusDesc(OrderStatusEnum.getTextByCode(status));
+		}
+		return R.ok().put("list", list);
+	}
 
 }

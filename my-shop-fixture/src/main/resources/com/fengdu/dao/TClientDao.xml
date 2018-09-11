@@ -50,6 +50,9 @@
 		<if test="name != null and name.trim() != ''">
 			AND c.client_name LIKE concat('%',#{name},'%')
 		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND c.mobile LIKE concat('%',#{mobile},'%')
+		</if>
 		<if test="clientType != null and clientType.trim() != ''">
 			AND c.client_type  = #{clientType}
 		</if>
@@ -90,6 +93,9 @@
 		</if>
 		<if test="upClientId != null">
 			AND c.up_client_id = #{upClientId}
+		</if>
+		<if test="mobile != null and mobile.trim() != ''">
+			AND c.mobile LIKE concat('%',#{mobile},'%')
 		</if>
 		<if test="registerTime != null">
             <![CDATA[ and date(c.register_time) = date(#{registerTime,jdbcType=TIMESTAMP})]]>

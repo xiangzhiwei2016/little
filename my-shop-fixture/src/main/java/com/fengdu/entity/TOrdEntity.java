@@ -93,6 +93,8 @@ public class TOrdEntity implements Serializable {
     private BigDecimal fullCutPrice;
 
     private String imgUrl;
+    
+    private String orderStatusDesc;
     /**
      * 设置：
      */
@@ -589,5 +591,13 @@ public class TOrdEntity implements Serializable {
 
 	public void setImgUrl(String imgUrl) {
 		this.imgUrl = imgUrl;
+	}
+
+	public String getOrderStatusDesc() {
+		return orderStatusDesc;
+	}
+
+	public void setOrderStatusDesc(String orderStatusDesc) {
+		this.orderStatusDesc = orderStatusDesc;
 	}
 }

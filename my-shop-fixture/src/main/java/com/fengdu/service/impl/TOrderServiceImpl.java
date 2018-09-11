@@ -74,7 +74,7 @@ public class TOrderServiceImpl implements TOrderService {
 	public int updateStatus(Long id) {
 		TOrderEntity entity = this.queryObject(id);
 		// 0取消订单 1已交定金
-		entity.setOrderStatus(OrderStatusEnum.ORDER_CANCLE.getCode());
+//		entity.setOrderStatus(OrderStatusEnum.ORDER_CANCLE.getCode());
 		return update(entity);
 	}
 }

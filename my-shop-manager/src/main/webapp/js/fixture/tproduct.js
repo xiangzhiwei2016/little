@@ -22,8 +22,8 @@ $(function () {
 
 			},
 /*			{label: '数量', name: 'countNum', index: 'count_num', width: 80},*/	
-		{label: '标签', name: 'tag', index: 'tag', align:"center", width: 80},
-		{label: '商品描述', name: 'description', index: 'description',align:"center",  width: 80}
+		{label: '标签', name: 'tagDesc', index: 'tag', align:"center", width: 80}
+	/*	{label: '商品描述', name: 'description', index: 'description',align:"center",  width: 80}*/
 		/*{label: '商品状态', name: 'status', index: 'status',align:"center",  width: 80},*/
 		/*{label: '创建时间', name: 'createTime', index: 'create_time',align:"center",  width: 80}/*,
 			{label: '修改时间', name: 'modifyTime', index: 'modify_time',align:"center",  width: 80},
@@ -82,6 +82,7 @@ let vm = new Vue({
 	el: '#rrapp',
 	data: {
         showList: true,
+        isDisabled:false,
         title: null,
         visible: false,
 		tProduct: {
@@ -105,9 +106,6 @@ let vm = new Vue({
 				price: [
 							{required: true, message: '原价不能为空且只能为数字'}
 						],
-						tag: [
-							{required: true, message: '标签不能为空,若有多个用“，”隔开'}
-						],
 			categoryId: [
 						{required: true, message: '商品类别不能为空，请先选择'}
 					],
@@ -130,6 +128,7 @@ let vm = new Vue({
 		},
 		add: function () {
 			vm.showList = false;
+			vm.isDisabled = false;
 			vm.title = "新增";
 			vm.uploadList = [];
 			vm.categorys = [];
@@ -142,13 +141,36 @@ let vm = new Vue({
 				return;
 			}
 			vm.showList = false;
+			vm.isDisabled = false;
             vm.title = "修改";
+            vm.getCategory();
+            vm.getInfo(id);
+            vm.getImagesGallery(id);
+		},
+		detail: function (event) {
+            let id = getSelectedRow();
+			if (id == null) {
+				return;
+			}
+			vm.isDisabled = true;
+			vm.showList = false;
+            vm.title = "详情";
             vm.getCategory();
             vm.getInfo(id);
             vm.getImagesGallery(id);
 		},
         saveOrUpdate: function (event) {
             let url = vm.tProduct.id == null ? "../tproduct/save" : "../tproduct/update";
+            if((vm.tProduct.tag == null || vm.tProduct.tag == undefined || vm.tProduct.tag == '')  
+            		&& (vm.tProduct.tag2 == null || vm.tProduct.tag2 == undefined || vm.tProduct.tag2 == '') ){
+            	alert("标签不能为空，至少填写1个标签");
+        		return;
+            }
+            if((vm.tProduct.tag != null && vm.tProduct.tag != undefined && vm.tProduct.tag != '' && vm.tProduct.tag.indexOf(",") >=0)
+            		|| (vm.tProduct.tag2 != null && vm.tProduct.tag2 != undefined && vm.tProduct.tag2 != '' && vm.tProduct.tag2.indexOf(",") >=0)){
+            	alert("标签中不能带有逗号”,“");
+        		return;
+            }
             vm.tProduct.imgList = vm.uploadList;
             if(vm.uploadList == null || vm.uploadList.length == 0){
             	alert("至少上传1个商品图片");
@@ -211,6 +233,7 @@ let vm = new Vue({
             $.get("../tcategory/queryAll", function (r) {
                 vm.categorys = r.list;
                 categorys = r.list;
+                console.log(categorys);
             });
         },
         
