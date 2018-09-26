@@ -11,8 +11,18 @@ $(function () {
                 label: '客户', name: 'imgUrl', index: 'img_url',  align:"center", width: 80, 
                 formatter: function (value,row,index) {
                 return transPhoto(index);
-            }},
-			{label: '手机号', name: 'mobile', index: 'mobile',align:"center",  width: 80},
+                }
+			},
+			{label: '手机号', name: 'mobile', index: 'mobile',align:"center",  width: 80,
+				formatter: function (value) {
+					if(null != value && undefined != value && '' != value){
+						value = value.substring(value.indexOf("-")+1);
+					}else{
+						value= "-";
+					}
+                    return value;
+                }
+            },
 			{label: '订单类型', name: 'orderType', index: 'order_type',align:"center",  width: 80,
 				 formatter: function (value) {
 	                    return transferOrderType(value);
@@ -20,6 +30,7 @@ $(function () {
 			},
 			{label: '订单状态', name: 'orderStatusDesc', index: 'order_status',align:"center",  width: 80},
 			{label: '金额', name: 'totalFee', index: 'total_fee',align:"center",  width: 80},
+			{label: '订单明细', name: 'detailDesc', index: 'detail_desc',align:"center",  width: 80},
 			{label: '提交订单时间', name: 'addTime', index: 'add_time',align:"center",  width: 80},
 			{label: '操作', name: 'orderStatus', index: 'operate',align:"center",  width: 80,
 				 formatter: function (value,row,index) {
@@ -57,7 +68,7 @@ var orderStatus = [ {
 	"value" : "已取消"
 }, {
 	"key" : "1",
-	"value" : "已交定金"
+	"value" : "已支付"
 } ];
 //订单类型
 var orderType = [ 
@@ -66,10 +77,10 @@ var orderType = [
 	"value" : "全部"
 },{
 	"key" : "1",
-	"value" : "定金"
+	"value" : "支付定金"
 }, {
 	"key" : "2",
-	"value" : "下单"
+	"value" : "购买商品"
 } ];
 
 // 订单状态转换
