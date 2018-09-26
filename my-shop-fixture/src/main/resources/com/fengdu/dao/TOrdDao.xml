@@ -43,6 +43,8 @@
         <result property="shippingNo" column="shipping_no"/>
         <result property="fullCutPrice" column="full_cut_price"/>
         <result property="imgUrl" column="img_url"/>
+         <result property="productId" column="product_id"/>
+          <result property="productName" column="product_name"/>
     </resultMap>
 
 	<select id="queryObject" resultType="com.fengdu.entity.TOrdEntity">
@@ -94,6 +96,8 @@
 	<select id="queryList" resultType="com.fengdu.entity.TOrdEntity">
 		select
 			o.`id`,
+			p.product_name,
+			g.product_id,
 			t.`img_url`,
 			t.`mobile`,
 			t.client_name,
@@ -133,8 +137,14 @@
 			o.`callback_status`,
 			o.`shipping_no`,
 			o.`full_cut_price`
-		from t_ord o,t_client t
-		WHERE 1=1 and o.client_id = t.id
+		  FROM t_ord o 
+  LEFT JOIN t_order_goods g 
+    ON o.`id` = g.`order_id` 
+  LEFT JOIN t_client t 
+    ON o.`client_id` = t.`id` 
+  LEFT JOIN t_product p 
+    ON p.id = g.`product_id` 
+		WHERE 1=1 
 		<if test="name != null and name.trim() != ''">
 			AND t.`client_name` LIKE concat('%',#{name},'%')
 		</if>

@@ -109,8 +109,7 @@ public class TCampaignTypeServiceImpl implements TCampaignTypeService {
 			rule = "定金" + tCampaignType.getDeposit() + Constants.MONEY_UNIT
 					+ "抵" + tCampaignType.getDiscount() + Constants.MONEY_UNIT;
 		} else if ("2".equals(type)) {
-			rule = "组团" + tCampaignType.getDescription() + Constants.PERSON_UNIT
-					+ "满" + tCampaignType.getMoneyFull() + Constants.MONEY_UNIT
+			rule = "满" + tCampaignType.getMoneyFull() + Constants.MONEY_UNIT
 					+ "减" + tCampaignType.getMoneyBack()
 					+ Constants.MONEY_UNIT;
 		} else if ("3".equals(type)) {

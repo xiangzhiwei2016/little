@@ -10,7 +10,7 @@ $(function () {
 			{
                 label: '客户', name: 'imgUrl', index: 'img_url',  align:"center", width: 80, 
                 formatter: function (value,row,index) {
-                return transPhoto(index);
+                	return transPhoto(index);
                 }
 			},
 			{label: '手机号', name: 'mobile', index: 'mobile',align:"center",  width: 80,

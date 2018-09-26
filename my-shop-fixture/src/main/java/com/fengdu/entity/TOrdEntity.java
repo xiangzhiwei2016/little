@@ -95,6 +95,13 @@ public class TOrdEntity implements Serializable {
     private String imgUrl;
     
     private String orderStatusDesc;
+    
+    private String productId;
+    
+    private String productName;
+    
+    // 详细描述
+    private String detailDesc;
     /**
      * 设置：
      */
@@ -599,5 +606,29 @@ public class TOrdEntity implements Serializable {
 
 	public void setOrderStatusDesc(String orderStatusDesc) {
 		this.orderStatusDesc = orderStatusDesc;
+	}
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getDetailDesc() {
+		return detailDesc;
+	}
+
+	public void setDetailDesc(String detailDesc) {
+		this.detailDesc = detailDesc;
 	}
 }

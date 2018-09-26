@@ -1,5 +1,6 @@
 package com.fengdu.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,15 +52,32 @@ public class TOrderController {
 	public R list(@RequestParam Map<String, Object> params) {
 		// 查询列表数据
 		Query query = new Query(params);
-
+		List<TOrdEntity> resultList  = new ArrayList<TOrdEntity>();
 		List<TOrdEntity> tOrdList = tOrdService.queryList(query);
 		for (TOrdEntity entity : tOrdList) {
 			int status = entity.getOrderStatus();
+			if(OrderStatusEnum.ORDER_NOT_PAYED.getCode() == status || OrderStatusEnum.ORDER_BACK.getCode() == status){
+				// 未付款的,已退货的过滤掉
+				continue;
+			}else if(OrderStatusEnum.ORDER_WATING.getCode() == status 
+					|| OrderStatusEnum.ORDER_RECIVEDD.getCode() == status
+							|| OrderStatusEnum.ORDER_FINISH.getCode() == status){
+				// 其他置为已付款
+				status = OrderStatusEnum.ORDER_PAYED.getCode();
+				
+				// 1：支付定金 ，2：购买商品
+				if("1".equals(entity.getOrderType())){
+					entity.setDetailDesc(String.format("支付定金%s元", entity.getTotalFee()));
+				}else if("2".equals(entity.getOrderType())){
+					entity.setDetailDesc(String.format("购买%s", entity.getProductName()==null ?"":entity.getProductName()));
+				}
+			}
 			entity.setOrderStatusDesc(OrderStatusEnum.getTextByCode(status));
+			resultList.add(entity);
 		}
-		int total = tOrdService.queryTotal(query);
+//		int total = tOrdService.queryTotal(query);
 
-		PageUtils pageUtil = new PageUtils(tOrdList, total, query.getLimit(),
+		PageUtils pageUtil = new PageUtils(resultList, resultList.size(), query.getLimit(),
 				query.getPage());
 
 		return R.ok().put("page", pageUtil);
